@@ -2,7 +2,8 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "root1234";
+$password = "5d4a28813b3b7fc3d045c37ed07bba7c3eba02a30f0e4c70";
+//$password = "root1234";
 $dbname = "bookmark";
 
 $conn = mysqli_connect($servername, $username, $password, $dbname) or die("Connection failed: " . mysqli_connect_error());
