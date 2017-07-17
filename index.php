@@ -14,7 +14,9 @@ if($_POST['submit']=='submit')
     $stmt = $conn->prepare("INSERT INTO treeview(urlid, title, url,parenturlid,active,created_ts,created_dt) VALUES (?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("sssssss", $urlid, $title, $url, $parenturlid, $active, $created_ts, $created_dt);
     if($stmt->execute())
-        echo '<div align="center" class="alert alert-success"><strong>Record Saved successfully !</strong></div>'; 
+        echo '<div align="center" class="alert alert-success"><strong>Record Saved successfully !</strong></div>';
+    else
+        echo '<div align="center" class="alert alert-danger"><strong>Record Not saved. Please check the errors !</strong></div>';     
     $stmt->close();
 }
 //header
