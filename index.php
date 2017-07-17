@@ -1,4 +1,6 @@
 <?php
+phpinfo();
+die;
 require_once('response.php');
 //insert row
 if($_POST['submit']=='submit')
