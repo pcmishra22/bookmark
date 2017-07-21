@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 21, 2017 at 07:52 PM
+-- Generation Time: Jul 21, 2017 at 08:43 PM
 -- Server version: 5.6.16-1~exp1
 -- PHP Version: 7.0.21-1~ubuntu16.04.1+deb.sury.org+1
 
@@ -29,15 +29,15 @@ SET time_zone = "+00:00";
 CREATE TABLE `treeview` (
   `urlid` varchar(16) NOT NULL,
   `title` varchar(1024) NOT NULL,
-  `url` varchar(2048) NOT NULL,
-  `parenturlid` varchar(16) NOT NULL,
-  `childrenids` varchar(2048) NOT NULL,
-  `memberids` varchar(1024) NOT NULL,
+  `url` varchar(2048) DEFAULT NULL,
+  `parenturlid` varchar(16) DEFAULT NULL,
+  `childrenids` varchar(2048) DEFAULT NULL,
+  `memberids` varchar(1024) DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '1',
-  `created_dt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_ts` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updated_dt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `created_ts` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
+  `created_dt` datetime DEFAULT NULL,
+  `updated_ts` timestamp NULL DEFAULT NULL,
+  `updated_dt` datetime DEFAULT NULL,
+  `created_ts` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
