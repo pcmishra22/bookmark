@@ -28,6 +28,10 @@
         }
     }
     </style>
+    <!--
+<style type="text/css">
+ .jstree li > a > .jstree-icon {  display:none !important; } 
+</style>-->
 
     <link rel="stylesheet" href="dist/themes/default/style.min.css" />
 

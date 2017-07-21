@@ -5,7 +5,7 @@ $username = "root";
 $password = "5d4a28813b3b7fc3d045c37ed07bba7c3eba02a30f0e4c70";
 //$password = "root1234";
 $dbname = "bookmark";
-
+//$conn = new PDO("mysql:host=$servername; dbname=$dbname", $username, $password);
 $conn = mysqli_connect($servername, $username, $password, $dbname) or die("Connection failed: " . mysqli_connect_error());
 /* check connection */
 if (mysqli_connect_errno()) {
@@ -17,8 +17,72 @@ if(isset($_GET['operation'])) {
 		$result = null;
 		switch($_GET['operation']) {
 			case 'get_node':
-				$node = isset($_GET['id']) && $_GET['id'] !== '#' ? (int)$_GET['id'] : 0;
+
+				//query for node
 				$sql = "SELECT * FROM `treeview` ";
+				//query result
+				$res = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
+				if($res->num_rows <=0){
+				 //add condition when result is zero
+				} else {
+					//iterate on results row and create new index array of data
+					while( $row = mysqli_fetch_assoc($res) ) { 
+						$data[] = $row;
+					}
+					
+					foreach ($data as $k=>$v )
+					{
+
+						if($data[$k] ['url']!='')
+							$data[$k] ['icon'] = 'jstree-file';
+						else
+							$data[$k] ['icon'] = 'jstree-folder';
+
+					  	$data[$k] ['id'] = $data[$k] ['urlid'];
+					  	$data[$k] ['text'] = $data[$k] ['title'];
+					  	$data[$k] ['parent_id'] = $data[$k] ['parenturlid'];
+					  	//$data[$k] ['type'] = 'child';
+					  	//$data[$k] ['icon'] = 'jstree-file';
+					}
+
+
+					$itemsByReference = array();
+
+				// Build array of item references:
+				foreach($data as $key => &$item) {
+				   $itemsByReference[$item['urlid']] = &$item;
+				   // Children array:
+				   $itemsByReference[$item['urlid']]['children'] = array();
+				   // Empty data class (so that json_encode adds "data: {}" ) 
+				   $itemsByReference[$item['urlid']]['data'] = new StdClass();
+				}
+
+				// Set items as children of the relevant parent item.
+				foreach($data as $key => &$item)
+				{
+
+				   if($item['parent_id'] && isset($itemsByReference[$item['parent_id']]))
+				   {
+					  $itemsByReference [$item['parent_id']]['children'][] = &$item;
+				   }
+				}	
+
+				// Remove items that were added to parents elsewhere:
+				foreach($data as $key => &$item) {
+				   if($item['parent_id'] && isset($itemsByReference[$item['parent_id']]))
+					  unset($data[$key]);
+				}
+				}
+				$result = $data;
+				break;
+			case 'get_node_by_id':
+				$node = isset($_GET['urlid']) && $_GET['urlid'] !== '#' ? $_GET['urlid'] : 0;
+				//check for id
+				if($node!=0)
+					$sql=	"SELECT * FROM `treeview` where urlid='$node'";
+				else
+					break;	
+				//query result
 				$res = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
 				if($res->num_rows <=0){
 				 //add condition when result is zero
@@ -64,7 +128,86 @@ if(isset($_GET['operation'])) {
 				}
 				$result = $data;
 				break;
-				
+					
+			
+			case 'getnode':
+					$urlid=$_POST['id'];
+					$sql = "SELECT * FROM `treeview` where urlid='".$urlid."'";
+					$res = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
+					while( $row = mysqli_fetch_assoc($res) ) { 
+						 $urlid=$row['urlid'];
+						 $title=$row['title'];
+						 $url=$row['url'];
+						}
+						if($url=='')
+						 {
+					?>
+						<div class="card card-outline-secondary my-4" id="ajaxdatadiv">
+	                    <div class="card-header">
+	                        Update Folder
+	                    </div>
+	                    <div class="card-block">
+	                    <form method="post" name="getform" action="">
+	                    <div class="form-group">
+	                        <label for="name">Title:</label>
+	                        <input type="text" class="form-control" name="title" id="title" value="<?php echo $title?>"required="required">
+	                           <input type="hidden" class="form-control" name="id" id="id" value="<?php echo $urlid?>">
+						</div>
+	                    <hr>
+	                      <button type="submit" name="submit" value="update" class="btn btn-success">Update</button>
+	                    </form>
+	                    </div>
+	                	</div>
+					<?php
+						}
+						 else
+						 {
+					?>
+								<!-- /.card -->
+								<div class="card card-outline-secondary my-4" id="ajaxdatadiv">
+				                    <div class="card-header">
+				                        Update Bookmark
+				                    </div>
+				                    <div class="card-block">
+				                    <form method="post" name="getform" action="">
+				                    <div class="form-group">
+				                        <label for="name">Title:</label>
+				                        <input type="text" class="form-control" name="title" id="title" value="<?php echo $title?>"required="required">
+
+				                    </div>
+				                    <hr>
+				                    <div class="form-group">
+				                        <label for="name">Url:</label>
+
+				                        <input type="text" class="form-control" name="url" id="url" value="<?php echo $url?>"required="required">
+				                        <input type="hidden" class="form-control" name="id" id="id" value="<?php echo $urlid?>">
+				                    </div>
+				                    <hr>
+				                      <button type="submit" name="submit" value="update" class="btn btn-success">Update</button>
+				                    </form>
+				                    </div>
+				                </div>
+                				<!-- /.card -->
+					<?php
+
+						 }	
+				?>
+	
+				<?php
+			
+				die;
+				break;
+			case 'dnd':
+				$urlid=$_POST['id'];
+				$parenturlid=$_POST['pid'];
+				$sql = "UPDATE `treeview`  SET `parenturlid` = '$parenturlid' WHERE `urlid` = '$urlid'";
+				if(mysqli_query($conn, $sql))
+        			echo '<div align="center" class="alert alert-success"><strong>Record Updated successfully !</strong></div>';
+    			else
+        			echo '<div align="center" class="alert alert-danger"><strong>Record Not Updated. Please check the errors !</strong></div>'; 
+        		die;
+				break;
+					
 			case 'create_node':
 				$node = isset($_GET['id']) && $_GET['id'] !== '#' ? (int)$_GET['id'] : 0;
 				
