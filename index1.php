@@ -69,7 +69,7 @@
                 <div class="list-group">
                     <a href="#" class="list-group-item active">Bookmark Tree </a>
                     
-                    <div id="treeView" class="list-group-item"></div>
+                    <div id="tree"></div>
                 </div>
             </div>
             <!-- /.col-lg-3 -->
@@ -121,7 +121,7 @@
     <script src="dist/tether/tether.min.js"></script>
     <script src="dist/bootstrap/js/bootstrap.min.js"></script>
     <script src="dist/jstree.min.js"></script>
-    <script src="dist/application.js"></script>
+    <script src="dist/application1.js"></script>
 
 </body>
 

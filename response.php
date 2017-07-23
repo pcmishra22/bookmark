@@ -2,8 +2,8 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "5d4a28813b3b7fc3d045c37ed07bba7c3eba02a30f0e4c70";
-//$password = "root1234";
+//$password = "5d4a28813b3b7fc3d045c37ed07bba7c3eba02a30f0e4c70";
+$password = "root1234";
 $dbname = "bookmark";
 //$conn = new PDO("mysql:host=$servername; dbname=$dbname", $username, $password);
 $conn = mysqli_connect($servername, $username, $password, $dbname) or die("Connection failed: " . mysqli_connect_error());
@@ -16,10 +16,10 @@ if(isset($_GET['operation'])) {
 	try {
 		$result = null;
 		switch($_GET['operation']) {
-			case 'get_node':
+						case 'get_node1':
 
 				//query for node
-				$sql = "SELECT * FROM `treeview` ";
+				$sql = "SELECT urlid,title,url,parenturlid FROM `treeview` ";
 				//query result
 				$res = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
 				if($res->num_rows <=0){
@@ -34,15 +34,72 @@ if(isset($_GET['operation'])) {
 					{
 
 						if($data[$k] ['url']!='')
+						{
 							$data[$k] ['icon'] = 'jstree-file';
+							$data[$k] ['type'] = 'file';
+						}
 						else
+						{
 							$data[$k] ['icon'] = 'jstree-folder';
+						}
+
+						if($data[$k] ['parenturlid']=='')
+						{
+							$data[$k] ['parent'] = '#';
+						}	
+						else
+						{
+							$data[$k] ['parent'] = $data[$k] ['parenturlid'];
+						}
 
 					  	$data[$k] ['id'] = $data[$k] ['urlid'];
 					  	$data[$k] ['text'] = $data[$k] ['title'];
-					  	$data[$k] ['parent_id'] = $data[$k] ['parenturlid'];
-					  	//$data[$k] ['type'] = 'child';
-					  	//$data[$k] ['icon'] = 'jstree-file';
+					  	
+					}
+
+				}
+				$result = $data;
+				break;
+			case 'get_node':
+
+				//query for node
+				$sql = "SELECT urlid,title,url,parenturlid FROM `treeview` ";
+				//query result
+				$res = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
+				if($res->num_rows <=0){
+				 //add condition when result is zero
+				} else {
+					//iterate on results row and create new index array of data
+					while( $row = mysqli_fetch_assoc($res) ) { 
+						$data[] = $row;
+					}
+					
+					foreach ($data as $k=>$v )
+					{
+
+						if($data[$k] ['url']!='')
+						{
+							$data[$k] ['icon'] = 'jstree-file';
+							$data[$k] ['type'] = 'bookmark';
+						}
+						else
+						{
+							$data[$k] ['icon'] = 'jstree-folder';
+							$data[$k] ['type'] = 'folder';
+						}
+
+						if($data[$k] ['parenturlid']=='')
+						{
+							$data[$k] ['parent_id'] = '#';
+						}	
+						else
+						{
+							$data[$k] ['parent_id'] = $data[$k] ['parenturlid'];
+						}
+
+					  	$data[$k] ['id'] = $data[$k] ['urlid'];
+					  	$data[$k] ['text'] = $data[$k] ['title'];
+					  	
 					}
 
 
@@ -197,14 +254,23 @@ if(isset($_GET['operation'])) {
 			
 				die;
 				break;
+				
 			case 'dnd':
 				$urlid=$_POST['id'];
 				$parenturlid=$_POST['pid'];
+
+				//check that parent node is not bookmark
+				$sql="Select url from treeview where urlid='$parenturlid'";
+
+				$res =mysqli_query($conn, $sql);
+
 				$sql = "UPDATE `treeview`  SET `parenturlid` = '$parenturlid' WHERE `urlid` = '$urlid'";
+				
 				if(mysqli_query($conn, $sql))
         			echo '<div align="center" class="alert alert-success"><strong>Record Updated successfully !</strong></div>';
     			else
         			echo '<div align="center" class="alert alert-danger"><strong>Record Not Updated. Please check the errors !</strong></div>'; 
+
         		die;
 				break;
 					
