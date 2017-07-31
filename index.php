@@ -12,15 +12,15 @@ if($_POST['submit']=='submit')
         $created_ts=time();
         $created_dt=date("Y-m-d H:i:s");
         // prepare and bind
-        $query = $pdo->prepare("INSERT INTO treeview(urlid, title,parenturlid,active,created_ts,created_dt) VALUES (?, ?, ?, ?, ?, ?)");
+        $query = $pdo->prepare("INSERT INTO treeview(urlid, title,parenturlid,active,created_dt) VALUES (?, ?, ?, ?, ?)");
 
         //bind value with parameter
         $query->bindValue(1, $urlid);
         $query->bindValue(2, $title); 
         $query->bindValue(3, $parenturlid); 
         $query->bindValue(4, $active); 
-        $query->bindValue(5, $created_ts); 
-        $query->bindValue(6, $created_dt); 
+        //$query->bindValue(5, $created_ts); 
+        $query->bindValue(5, $created_dt); 
         $query->execute();  
 
     }
@@ -34,15 +34,15 @@ if($_POST['submit']=='submit')
         $created_ts=time();
         $created_dt=date("Y-m-d H:i:s");
         // prepare and bind
-        $query = $pdo->prepare("INSERT INTO treeview(urlid, title, url,parenturlid,active,created_ts,created_dt) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $query = $pdo->prepare("INSERT INTO treeview(urlid, title, url,parenturlid,active,created_dt) VALUES (?, ?, ?, ?, ?, ?)");
         //bind value with parameter
         $query->bindValue(1, $urlid);
         $query->bindValue(2, $title); 
         $query->bindValue(3, $url); 
         $query->bindValue(4, $parenturlid); 
         $query->bindValue(5, $active); 
-        $query->bindValue(6, $created_ts); 
-        $query->bindValue(7, $created_dt); 
+        //$query->bindValue(6, $created_ts); 
+        $query->bindValue(6, $created_dt); 
         $query->execute();  
 
     }
@@ -60,20 +60,20 @@ if($_POST['submit']=='update')
      $urlid=$_POST['id'];
      $title=$_POST['title'];
      $url=$_POST['url'];
-     $updated_ts=time();
+     //$updated_ts=time();
      $updated_dt=date("Y-m-d H:i:s");
     // prepare and bind
 
     //$sql = "UPDATE treeview SET title = ? WHERE urlid = ?";
     # And pass optional (but important) PDO attributes
 
-    $query = $pdo->prepare("UPDATE treeview SET title = ?, url = ?, updated_ts = ?, updated_dt = ? WHERE urlid = ?");     
+    $query = $pdo->prepare("UPDATE treeview SET title = ?, url = ?, updated_dt = ? WHERE urlid = ?");     
 
     $query->bindValue(1, $title);
     $query->bindValue(2, $url); 
-    $query->bindValue(3, $updated_ts); 
-    $query->bindValue(4, $updated_dt); 
-    $query->bindValue(5, $urlid); 
+    //$query->bindValue(3, $updated_ts); 
+    $query->bindValue(3, $updated_dt); 
+    $query->bindValue(4, $urlid); 
     $query->execute();  
 
  
