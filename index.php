@@ -1,5 +1,5 @@
 <?php
-require_once('response.php');
+require_once('responsepdo.php');
 //insert row
 if($_POST['submit']=='submit')
 {
@@ -12,8 +12,16 @@ if($_POST['submit']=='submit')
         $created_ts=time();
         $created_dt=date("Y-m-d H:i:s");
         // prepare and bind
-        $stmt = $conn->prepare("INSERT INTO treeview(urlid, title,parenturlid,active,created_ts,created_dt) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssss", $urlid, $title, $parenturlid, $active, $created_ts, $created_dt);
+        $query = $pdo->prepare("INSERT INTO treeview(urlid, title,parenturlid,active,created_ts,created_dt) VALUES (?, ?, ?, ?, ?, ?)");
+
+        //bind value with parameter
+        $query->bindValue(1, $urlid);
+        $query->bindValue(2, $title); 
+        $query->bindValue(3, $parenturlid); 
+        $query->bindValue(4, $active); 
+        $query->bindValue(5, $created_ts); 
+        $query->bindValue(6, $created_dt); 
+        $query->execute();  
 
     }
     else
@@ -26,15 +34,23 @@ if($_POST['submit']=='submit')
         $created_ts=time();
         $created_dt=date("Y-m-d H:i:s");
         // prepare and bind
-        $stmt = $conn->prepare("INSERT INTO treeview(urlid, title, url,parenturlid,active,created_ts,created_dt) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssss", $urlid, $title, $url, $parenturlid, $active, $created_ts, $created_dt);
+        $query = $pdo->prepare("INSERT INTO treeview(urlid, title, url,parenturlid,active,created_ts,created_dt) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        //bind value with parameter
+        $query->bindValue(1, $urlid);
+        $query->bindValue(2, $title); 
+        $query->bindValue(3, $url); 
+        $query->bindValue(4, $parenturlid); 
+        $query->bindValue(5, $active); 
+        $query->bindValue(6, $created_ts); 
+        $query->bindValue(7, $created_dt); 
+        $query->execute();  
 
     }
-            if($stmt->execute())
+        if($query->rowCount()) {
             echo '<div align="center" class="alert alert-success"><strong>Record Saved successfully !</strong></div>';
-            else
-                echo '<div align="center" class="alert alert-danger"><strong>Record Not saved. Please check the errors !</strong></div>'.$stmt->error;               
-            $stmt->close();
+         } else {
+            echo '<div align="center" class="alert alert-danger"><strong>Record Not Saved. Please check the errors !</strong></div>';  
+         }
 
 }
 //update row
@@ -48,17 +64,24 @@ if($_POST['submit']=='update')
      $updated_dt=date("Y-m-d H:i:s");
     // prepare and bind
 
-     $sql = "UPDATE `treeview`   
-            SET `title` = '$title',
-                `url` = '$url',
-                `updated_ts` = '$updated_ts',
-                `updated_dt` = '$updated_dt'
-            WHERE `urlid` = '$urlid'";
+    //$sql = "UPDATE treeview SET title = ? WHERE urlid = ?";
+    # And pass optional (but important) PDO attributes
 
-    if(mysqli_query($conn, $sql))
+    $query = $pdo->prepare("UPDATE treeview SET title = ?, url = ?, updated_ts = ?, updated_dt = ? WHERE urlid = ?");     
+
+    $query->bindValue(1, $title);
+    $query->bindValue(2, $url); 
+    $query->bindValue(3, $updated_ts); 
+    $query->bindValue(4, $updated_dt); 
+    $query->bindValue(5, $urlid); 
+    $query->execute();  
+
+ 
+     if($query->rowCount()) {
         echo '<div align="center" class="alert alert-success"><strong>Record Updated successfully !</strong></div>';
-    else
-        echo '<div align="center" class="alert alert-danger"><strong>Record Not Updated. Please check the errors !</strong></div>';       
+     } else {
+        echo '<div align="center" class="alert alert-danger"><strong>Record Not Updated. Please check the errors !</strong></div>';  
+     }
 
 }
 echo '<div id="message"></div>';

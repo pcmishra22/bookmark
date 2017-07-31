@@ -17,7 +17,7 @@
 
                     "data"  : {
 
-                                "url" : 'response.php?operation=get_node1',
+                                "url" : 'responsepdo.php?operation=get_node1',
                                 'data' : function (node) {
                                         return { "id" : node.id};
                                         },
@@ -74,7 +74,7 @@
 
             //ajax call.....................................................
             $.ajax ({
-                            url: "response.php?operation=dnd",
+                            url: "responsepdo.php?operation=dnd",
                             type: "post",
                             data: "id="+nodeid+'&pid='+pid,
                             success: function(res) {                                
@@ -89,7 +89,7 @@
 
     //ajax call.....................................................
     $.ajax ({
-                    url: "response.php?operation=getnode",
+                    url: "responsepdo.php?operation=getnode",
                     type: "post",
                     data: "id="+nodeid,
                     success: function(res) {
